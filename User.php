@@ -6,6 +6,7 @@ class User extends Person
     private $username;
     private $password;
     private $email;
+
     public function __construct($first, $last, $username, $password, $email)
     {
         parent::__construct($first, $last);

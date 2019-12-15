@@ -19,14 +19,14 @@ include_once ('User.php');
 <div class="container border border-dark p-4">
     <form action="users.php" method="post">
         <div class="form-group w-75">
-            <input name="firstName" type="text" class="form-control w-25" placeholder="First name">
+            <input name="firstName" type="text" class="form-control w-25" placeholder="First name" required>
         </div>
         <div class="form-group w-75">
-            <input name="lastName" type="text" class="form-control w-25" placeholder="Last name">
+            <input name="lastName" type="text" class="form-control w-25" placeholder="Last name" required>
         </div>
 
         <div class="form-group w-75">
-            <input class="form-control w-25" type="text" name="username" placeholder="Username">
+            <input class="form-control w-25" type="text" name="username" placeholder="Username" required>
         </div>
         <div class="form-group w-75">
             <input class="form-control w-25" type="password" name="password" placeholder="Password">
@@ -41,25 +41,32 @@ include_once ('User.php');
 
 
 <?php
-if(isset($_POST['submit'])) {
+if( !empty($_POST['firstName']) && !empty($_POST['lastName']) && !empty($_POST['username']) && !empty($_POST['password']) && !empty($_POST['email']) )
+{
+    if(isset($_POST['submit'])) {
+        $pdo = new PDO('mysql:host=localhost;dbname=user','root','');
+        $stmt = $pdo->prepare('INSERT INTO users (firstname, lastname, username, password, email) VALUES (?, ?, ?, ?, ?)');
+        $user = new User(
+            $_POST['firstName'],
+            $_POST['lastName'],
+            $_POST['username'],
+            $_POST['password'],
+            $_POST['email'] );
+        $first = $user->getFirstName();
+        $last = $user->getLastName();
+        $username = $user->getUsername();
+        $password = $user->getPassword();
+        $email = $user->getEmail();
 
-    if(!empty($_POST['firstName']) ){
-        echo 'OK';
+        $stmt->bindParam(1,$first,PDO::PARAM_STR);
+        $stmt->bindParam(2,  $last,PDO::PARAM_STR);
+        $stmt->bindParam(3,$username,PDO::PARAM_STR);
+        $stmt->bindParam(4,  $password,PDO::PARAM_STR);
+        $stmt->bindParam(5,  $email,PDO::PARAM_STR);
+        $stmt->execute();
+        $stmt = NULL;
+
     }
-    $pdo = new PDO('mysql:host=localhost;dbname=user','root','');
-    $stmt = $pdo->prepare('INSERT INTO users (firstname, lastname, username, password, email) VALUES (?, ?, ?, ?, ?)');
-    $first      = $_POST['firstName'];
-    $last       = $_POST['lastName'];
-    $username   = $_POST['username'];
-    $password   = $_POST['password'];
-    $email      = $_POST['email'];
-    $stmt->bindParam(1, $first,PDO::PARAM_STR);
-    $stmt->bindParam(2, $last,PDO::PARAM_STR);
-    $stmt->bindParam(3, $username,PDO::PARAM_STR);
-    $stmt->bindParam(4, $password,PDO::PARAM_STR);
-    $stmt->bindParam(5, $email,PDO::PARAM_STR);
-    $stmt->execute();
-    $stmt = NULL;
 }
 ?>
 

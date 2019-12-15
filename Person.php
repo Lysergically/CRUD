@@ -5,6 +5,7 @@ class Person
 {
     private $firstName;
     private $lastName;
+
     public function __construct($first, $last)
     {
         $this->firstName = $first;
